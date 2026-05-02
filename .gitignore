@@ -25,6 +25,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+__pycache__/
+*.py[cod]
+*$py.class
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -54,6 +57,34 @@ cover/
 # Translations
 *.mo
 *.pot
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Project data - do not push large audio/data files
+SER_Project/data/
+*.wav
+*.zip
+
+# Generated reports/figures/results
+SER_Project/reports/figures/
+SER_Project/reports/*.csv
+
+# Logs
+*.log
 
 # Django stuff:
 *.log
