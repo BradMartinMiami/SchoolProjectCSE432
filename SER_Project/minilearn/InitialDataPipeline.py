@@ -9,12 +9,10 @@ modality_values = {
     "02":"video-only",
     "03":"audio-only",
 }
-
 vocal_channel_values = {
     "01":"speech",
     "02":"song",
 }
-
 emotion_values = {
     "01":"neutral",
     "02":"calm",
@@ -25,24 +23,21 @@ emotion_values = {
     "07":"disgust",
     "08":"surprised",
 }
-
 intensity_values = {
     "01":"normal",
     "02":"strong",
 }
-
 statement_values = {
     "01":"Kids are talking by the door",
     "02":"Dogs are sitting by the door",
 }
-
 repetition_values = {
     "01":"1st",
     "02":"2nd",
 }
 
 
-def build_metadata(data_dir="data", output_path="data/processed/ravdess_metadata.csv"):
+def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/processed/ravdess_metadata.csv"):
     rows = []
 
     wav_files = sorted(Path(data_dir).rglob("*.wav"))
@@ -80,8 +75,6 @@ def build_metadata(data_dir="data", output_path="data/processed/ravdess_metadata
         })
 
     metadata_table = pd.DataFrame(rows)
-    metadata_table = metadata_table.sort_values(["actor", "filename"]).reset_index(drop=True)
-
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     metadata_table.to_csv(output_path, index=False)
