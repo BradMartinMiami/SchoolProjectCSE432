@@ -34,8 +34,7 @@ repetition_values = {
     "02": "2nd",
 }
 
-def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/processed"):
-    # Use anchor-relative defaults if not specified
+def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/processed/metadata.csv"):
     data_dir = Path(data_dir) 
     output_path = Path(output_path) 
 
@@ -50,7 +49,7 @@ def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/pr
         parts = file.stem.split("-")
 
         if len(parts) != 7:
-            print(f"Skipping invalid filename: {file.name}")
+            print("Invalid file")
             continue
 
         actor = int(parts[6])
@@ -58,6 +57,7 @@ def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/pr
 
         rows.append({
             "filename":            file.name,
+            "filepath":            str(file),
             "modality_number":     parts[0],
             "modality":            modality_values.get(parts[0]),
             "vocal_channel_number": parts[1],
