@@ -34,20 +34,10 @@ repetition_values = {
     "02": "2nd",
 }
 
-
-# Resolves to SER_Project/minilearn/ — works regardless of where you run from
-_THIS_FILE = Path(__file__).resolve()          # .../SER_Project/minilearn/InitialDataPipeline.py
-_MINILEARN_DIR = _THIS_FILE.parent             # .../SER_Project/minilearn/
-_SER_PROJECT_ROOT = _MINILEARN_DIR.parent      # .../SER_Project/
-
-_DEFAULT_DATA_DIR = _SER_PROJECT_ROOT / "data"
-_DEFAULT_OUTPUT = _SER_PROJECT_ROOT / "data" / "processed" / "ravdess_metadata.csv"
-
-
-def build_metadata(data_dir=None, output_path=None):
+def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/processed"):
     # Use anchor-relative defaults if not specified
-    data_dir = Path(data_dir) if data_dir else _DEFAULT_DATA_DIR
-    output_path = Path(output_path) if output_path else _DEFAULT_OUTPUT
+    data_dir = Path(data_dir) 
+    output_path = Path(output_path) 
 
     rows = []
     wav_files = sorted(data_dir.rglob("*.wav"))
@@ -78,14 +68,13 @@ def build_metadata(data_dir=None, output_path=None):
             "intensity":           intensity_values.get(parts[3]),
             "statement_number":    parts[4],
             "statement":           statement_values.get(parts[4]),
-            "repetition_number":   parts[5],   # fixed typo: was "repeition_number"
+            "repetition_number":   parts[5], 
             "repetition":          repetition_values.get(parts[5]),
             "actor":               actor,
             "gender":              gender,
         })
 
     metadata_table = pd.DataFrame(rows)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
     metadata_table.to_csv(output_path, index=False)
 
     print(f"Saved metadata to: {output_path}")
