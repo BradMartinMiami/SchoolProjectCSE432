@@ -106,4 +106,42 @@ def extract_features(wav_path):
 
     return features
 
+def build_feature_table(metadata_csv="data/processed/metadata.csv",output_csv="data/processed/features.csv"):
+    
+
+    metadata = pd.read_csv(metadata_csv)
+    print(f"Loaded metadata with {len(metadata)} rows")
+
+    rows = []
+    skipped = 0
+    #didnt like that you couldnt see what was going on, found TQDM and looks much nicer.
+    for _, meta_row in tqdm(metadata.iterrows(), total=len(metadata), desc="Extracting features"):
+
+        feats = extract_features(meta_row["filepath"])
+
+        # If the file was corrupt, extract_features returned None — skip it
+        if feats is None:
+            skipped += 1
+            continue
+
+        # Combine the metadata fields with the new feature fields
+        row = meta_row.to_dict()
+        row.update(feats)
+        rows.append(row)
+
+    feature_table = pd.DataFrame(rows)
+
+    feature_table = feature_table.dropna()
+
+    feature_table.to_csv(output_csv, index=False)
+
+    print(f"\nSaved features to: {output_csv}")
+    print(f"Shape: {feature_table.shape}")
+
+    return feature_table
+
+if __name__ == "__main__":
+    build_feature_table()
+
+
 
