@@ -1,85 +1,94 @@
-## need to make it outside of its notebook to be able to use it in other places. Therefor I have made this to be able to gain the original data and make it into it.
-
 from pathlib import Path
 import pandas as pd
 
 
 modality_values = {
-    "01":"full_AV",
-    "02":"video-only",
-    "03":"audio-only",
+    "01": "full_AV",
+    "02": "video-only",
+    "03": "audio-only",
 }
 vocal_channel_values = {
-    "01":"speech",
-    "02":"song",
+    "01": "speech",
+    "02": "song",
 }
 emotion_values = {
-    "01":"neutral",
-    "02":"calm",
-    "03":"happy",
-    "04":"sad",
-    "05":"angry",
-    "06":"fearful",
-    "07":"disgust",
-    "08":"surprised",
+    "01": "neutral",
+    "02": "calm",
+    "03": "happy",
+    "04": "sad",
+    "05": "angry",
+    "06": "fearful",
+    "07": "disgust",
+    "08": "surprised",
 }
 intensity_values = {
-    "01":"normal",
-    "02":"strong",
+    "01": "normal",
+    "02": "strong",
 }
 statement_values = {
-    "01":"Kids are talking by the door",
-    "02":"Dogs are sitting by the door",
+    "01": "Kids are talking by the door",
+    "02": "Dogs are sitting by the door",
 }
 repetition_values = {
-    "01":"1st",
-    "02":"2nd",
+    "01": "1st",
+    "02": "2nd",
 }
 
 
-def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/processed/ravdess_metadata.csv"):
-    rows = []
+# Resolves to SER_Project/minilearn/ — works regardless of where you run from
+_THIS_FILE = Path(__file__).resolve()          # .../SER_Project/minilearn/InitialDataPipeline.py
+_MINILEARN_DIR = _THIS_FILE.parent             # .../SER_Project/minilearn/
+_SER_PROJECT_ROOT = _MINILEARN_DIR.parent      # .../SER_Project/
 
-    wav_files = sorted(Path(data_dir).rglob("*.wav"))
+_DEFAULT_DATA_DIR = _SER_PROJECT_ROOT / "data"
+_DEFAULT_OUTPUT = _SER_PROJECT_ROOT / "data" / "processed" / "ravdess_metadata.csv"
+
+
+def build_metadata(data_dir=None, output_path=None):
+    # Use anchor-relative defaults if not specified
+    data_dir = Path(data_dir) if data_dir else _DEFAULT_DATA_DIR
+    output_path = Path(output_path) if output_path else _DEFAULT_OUTPUT
+
+    rows = []
+    wav_files = sorted(data_dir.rglob("*.wav"))
+
+    if not wav_files:
+        print(f"WARNING: No .wav files found in {data_dir.resolve()}")
+        print("Make sure you've run download_data.py first.")
 
     for file in wav_files:
         parts = file.stem.split("-")
 
         if len(parts) != 7:
-            print("this is invalid not using it")
+            print(f"Skipping invalid filename: {file.name}")
             continue
 
         actor = int(parts[6])
-        gender = ""
-        if (actor % 2 == 1) :
-            gender = "male"
-        else:
-            gender = "female"
+        gender = "male" if actor % 2 == 1 else "female"
 
         rows.append({
-            "filename" : file.name,
-            "modality_number" : parts[0],
-            "modality": modality_values.get(parts[0]),
-            "vocal_channel_number" : parts[1],
-            "vocal_channel": vocal_channel_values.get(parts[1]),
-            "emotion_code" : parts[2],
-            "emotion": emotion_values.get(parts[2]),
-            "intensity_number" : parts[3],
-            "intensity": intensity_values.get(parts[3]),
-            "statement_number" : parts[4],
-            "statement": statement_values.get(parts[4]),
-            "repeition_number" : parts[5],
-            "repetition": repetition_values.get(parts[5]),
-            "actor": actor,
-            "gender": gender,
+            "filename":            file.name,
+            "modality_number":     parts[0],
+            "modality":            modality_values.get(parts[0]),
+            "vocal_channel_number": parts[1],
+            "vocal_channel":       vocal_channel_values.get(parts[1]),
+            "emotion_code":        parts[2],
+            "emotion":             emotion_values.get(parts[2]),
+            "intensity_number":    parts[3],
+            "intensity":           intensity_values.get(parts[3]),
+            "statement_number":    parts[4],
+            "statement":           statement_values.get(parts[4]),
+            "repetition_number":   parts[5],   # fixed typo: was "repeition_number"
+            "repetition":          repetition_values.get(parts[5]),
+            "actor":               actor,
+            "gender":              gender,
         })
 
     metadata_table = pd.DataFrame(rows)
-    output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     metadata_table.to_csv(output_path, index=False)
 
-    print(f"Saved metadata table to: {output_path}")
+    print(f"Saved metadata to: {output_path}")
     print(f"Shape: {metadata_table.shape}")
     print(metadata_table.head())
 
