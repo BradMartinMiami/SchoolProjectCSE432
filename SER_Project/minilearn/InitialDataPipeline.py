@@ -34,7 +34,7 @@ repetition_values = {
     "02": "2nd",
 }
 
-def build_metadata(data_dir="SER_Project/data", output_path="SER_Project/data/processed/metadata.csv"):
+def build_metadata(data_dir="data", output_path="data/processed/metadata.csv"):
     data_dir = Path(data_dir) 
     output_path = Path(output_path) 
 
