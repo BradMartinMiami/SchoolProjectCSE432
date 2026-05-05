@@ -104,6 +104,10 @@ def extract_features(wav_path):
     features["spec_rolloff_min"]  = rolloff.min()
     features["spec_rolloff_max"]  = rolloff.max()
 
+    for key in features:
+        if np.isnan(features[key]) or np.isinf(features[key]):
+            features[key] = 0.0
+
     return features
 
 def build_feature_table(metadata_csv="data/processed/metadata.csv",output_csv="data/processed/features.csv"):

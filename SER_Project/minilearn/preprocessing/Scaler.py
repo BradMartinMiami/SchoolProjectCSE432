@@ -14,6 +14,8 @@ class StandardScaler:
         self.mean = np.mean(X, axis=0)
         self.std = np.std(X, axis=0)
 
+        self.std[(self.std == 0) | np.isnan(self.std)] = 1
+        
         return self
     
     #basically using the saved mean and std to be able to standardized the data
