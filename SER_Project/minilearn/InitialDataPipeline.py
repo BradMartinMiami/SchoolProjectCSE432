@@ -35,6 +35,8 @@ repetition_values = {
 }
 
 def build_metadata(data_dir="data", output_path="data/processed/metadata.csv"):
+    data_dir = Path(data_dir) 
+    output_path = Path(output_path) 
 
     rows = []
     wav_files = sorted(data_dir.rglob("*.wav"))
