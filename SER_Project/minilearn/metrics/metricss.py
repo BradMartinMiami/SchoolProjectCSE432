@@ -218,26 +218,3 @@ def plot_roc_curves(y_true, y_proba, labels, class_names, title='ROC Curves'):
     plt.grid(alpha=0.3)
     plt.tight_layout()
     plt.show()
-
-
-def print_report(y_true, y_pred, y_proba, labels, class_names, model_name='Model'):
-    # print everything at once so I don't have to call each function
-    print(f'=== {model_name} ===')
-    print(f'Accuracy:           {accuracy(y_true, y_pred):.4f}')
-    print(f'Precision (macro):  {precision(y_true, y_pred, labels):.4f}')
-    print(f'Recall (macro):     {recall(y_true, y_pred, labels):.4f}')
-    print(f'F1 (macro):         {f1_score(y_true, y_pred, labels):.4f}')
-    print(f'F1 (weighted):      {f1_score(y_true, y_pred, labels, average="weighted"):.4f}')
-    print(f'AUC (macro):        {roc_auc(y_true, y_proba, labels):.4f}')
-    print()
-
-    # per-class breakdown
-    p = precision(y_true, y_pred, labels, average=None)
-    r = recall(y_true, y_pred, labels, average=None)
-    f = f1_score(y_true, y_pred, labels, average=None)
-    cm = confusion_matrix(y_true, y_pred, labels)
-    support = cm.sum(axis=1)
-
-    print(f'{"class":<12} {"precision":>10} {"recall":>10} {"f1":>10} {"count":>10}')
-    for i in range(len(labels)):
-        print(f'{class_names[i]:<12} {p[i]:>10.4f} {r[i]:>10.4f} {f[i]:>10.4f} {support[i]:>10d}')
