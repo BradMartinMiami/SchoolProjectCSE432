@@ -4,7 +4,7 @@
 import numpy as np
 
 
-class LogisticRegression:
+class LogisticRegressionMM:
 
     def __init__(self, lr=0.1, n_iters=1000, l2=0.0):
         self.lr = lr
