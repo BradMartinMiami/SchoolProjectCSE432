@@ -2,7 +2,7 @@ import numpy as np
 
 class StandardScalerMM:
     #basic constructor when called with two variables
-    def _init_(self):
+    def __init__(self):
         self.mean = None
         self.std = None
 
