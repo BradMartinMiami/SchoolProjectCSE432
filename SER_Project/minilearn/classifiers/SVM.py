@@ -13,7 +13,7 @@ class SVMMM:
         self.b = None
         self.classes_ = None
 
-    #Because there are three different kernels we have to assign values depending on each one
+    
     def fit(self, X, y):
         # Convert labels to -1 and 1
         self.classes_ = np.unique(y)
