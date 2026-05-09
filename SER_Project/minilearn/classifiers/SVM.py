@@ -3,7 +3,7 @@ from scipy.optimize import minimize
 
 class SVMMM:
 
-    def __init__(self, C=1, kernel="linear", gamma= "scale", degree=3, coef=0.0, learning=0.001, max_iter=1000):
+    def __init__(self, C=1, kernel="linear", gamma= "scale", degree=3, coef=0.0, learning=0.001, max_iters=1000):
 
         #the C is the amount of regularization
         self.C = C
@@ -14,11 +14,11 @@ class SVMMM:
         self.degree = degree
         self.coef = coef
         self.learning = learning
-        self.max_iter = max_iter
+        self.max_iters = max_iters
         self.w = None
         self.b = None
-        self.X = None
-        self.y = None
+        self.X_train = None
+        self.y_train = None
 
     #Because there are three different kernels we have to assign values depending on each one
     def kernel(self, X1, X2):
@@ -39,12 +39,12 @@ class SVMMM:
         elif self.kernel == "poly":
             return (np.dot(X1, X2) + 1) ** self.degree
         
-    def compute_kernel(self, X, i):
-        n1, n2 = X.shape[0], i.shape[0]
+    def compute_kernel(self, X, Z):
+        n1, n2 = X.shape[0], Z.shape[0]
         K = np.zeros((n1, n2))
         for i in range(n1):
             for j in range(n2):
-                K[i, j] = self.kernel(X[i], i[j])
+                K[i, j] = self.kernel(X[i], Z[j])
         return K
     
     def fit(self, X, y):
@@ -62,7 +62,7 @@ class SVMMM:
             self.w = np.zeros(n_features)
             self.b = 0
             
-            for i in range(self.max_iter):
+            for i in range(self.max_iters):
                 # Compute margins
                 margins = y_binary * (np.dot(X, self.w) - self.b)
                 
