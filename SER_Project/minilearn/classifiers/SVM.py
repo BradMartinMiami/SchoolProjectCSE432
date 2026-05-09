@@ -71,11 +71,11 @@ class SVMMM:
                 for i in range(n_samples):
                     if margins[i] < 1:  # point violates margin
                         # Update w and b
-                        self.w = self.w - self.lr * (self.w - self.C * y_binary[i] * X[i])
-                        self.b = self.b - self.lr * (-self.C * y_binary[i])
+                        self.w = self.w - self.learning * (self.w - self.C * y_binary[i] * X[i])
+                        self.b = self.b - self.learning * (-self.C * y_binary[i])
                     else:
                         # Only regularization
-                        self.w = self.w - self.lr * self.w
+                        self.w = self.w - self.learning * self.w
                 
                 # Reduce learning rate over time
                 self.learning *= 0.99
@@ -119,7 +119,7 @@ class SVMMM:
         if self.kernel == 'linear':
             scores = np.dot(X, self.w) - self.b
         else:
-            K = self._compute_kernel_matrix(X, self.X_train)
+            K = self.compute_kernel(X, self.X_train)
             scores = np.dot(K, self.alphas) - self.b
         
         # Convert back to original labels
