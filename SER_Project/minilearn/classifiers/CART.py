@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from collections import Counter
 
 
@@ -170,4 +171,99 @@ class CART:
     def score(self, X, y):
         preds = self.predict(X)
         return np.mean(preds == y)
+    
+    #This whole method is so that we can draw our tree which is kind of crazy
+    #if you think about it, it uses recursion and then mathplot lib
+    def plot_tree(self, figsize=(20, 10)):
+    
+        # Helper: count leaves under any subtree
+        def count_leaves(tree):
+            #if it is not a tree dict or have a feature it is a leaf. Base case
+            if not isinstance(tree, dict) or "feature" not in tree:
+                return 1
+            #if not a leaf go down another level on each side recusrively
+            return count_leaves(tree["left"]) + count_leaves(tree["right"])
+    
+        # Helper: get tree depth
+        def get_depth(tree):
+            #again check if current node is a leaf
+            if not isinstance(tree, dict) or "feature" not in tree:
+                return 1
+            #Keep going if not a leaf and recursively get depth
+            return 1 + max(get_depth(tree["left"]), get_depth(tree["right"]))
+    
+        #variables that hold the leaves and depth
+        total_leaves = count_leaves(self.tree)
+        total_depth = get_depth(self.tree)
+
+
+        #creates the plot
+        fig, ax = plt.subplots(figsize=figsize)
+        #X-axis from 0 to total number of leaves
+        ax.set_xlim(0, total_leaves)
+        #Y-axis from 0 to total depth
+        ax.set_ylim(0, total_depth)
+        #because its a tree we dont want to show the numbers on the axises
+        ax.axis('off')
+
+        #main method for drawing the tree
+        #Tree is the tree dict we are passing through
+        #X-min is the left boundary, with x_max is the right boundary
+        #y is the height
+        def draw(tree, x_min, x_max, y):    
+            # Center x for this node
+            #this is so it gets drawn in the middle of the space
+            x = (x_min + x_max) / 2
+        
+            # This code cheks if it is a leaf.
+            #if it is a leaf it grabs the predicted class
+            #it also makes it as a green box
+            if not isinstance(tree, dict) or "feature" not in tree:
+                ax.text(x, y, f"Predict\n{tree}", 
+                        ha='center', va='center',
+                        bbox=dict(boxstyle='round,pad=0.4', facecolor='lightgreen', edgecolor='darkgreen'),
+                        fontsize=9)
+                return x
+        
+            # Internal node
+            #This grabs the feature being split
+            feature = tree["feature"]
+            #the value it is being split at
+            middlenum = tree["middlenum"]
+            #This draws the decision node, it makes the text centered
+            #and also using the {middlenum} it shows the split value againt the feature
+            #makes it light blue
+            ax.text(x, y, f"Feature {feature}\n<= {middlenum:.3f}",
+                    ha='center', va='center',
+                    bbox=dict(boxstyle='round,pad=0.4', facecolor='lightblue', edgecolor='steelblue'),
+                    fontsize=9)
+        
+            #This is used to check the amount of space avaliable under each
+            #So it finds the amkount of leaves under the left and right branch
+            #So more space is allocated depending on more leaves
+            left_leaves = count_leaves(tree["left"])
+            right_leaves = count_leaves(tree["right"])
+            #This decides where the left branch ends and the right branch begins for plotting
+            split_point = x_min + (left_leaves / (left_leaves + right_leaves)) * (x_max - x_min)
+        
+            # Recurse through and draw the left and right branches of each node
+            #you subtract one from the height because your going down a level
+            x_left = draw(tree["left"], x_min, split_point, y - 1)
+            x_right = draw(tree["right"], split_point, x_max, y - 1)
+
+            #This draws the lines to the left and the right of each node
+            ax.plot([x, x_left], [y - 0.2, y - 0.8], 'k-', linewidth=1)
+            ax.plot([x, x_right], [y - 0.2, y - 0.8], 'k-', linewidth=1)
+            #This makes it so we draw the yes and no labels on each branch
+            ax.text((x + x_left) / 2 - 0.1, y - 0.5, "YES", fontsize=8, color='green', ha='right')
+            ax.text((x + x_right) / 2 + 0.1, y - 0.5, "NO", fontsize=8, color='red', ha='left')
+
+            #return current position
+            return x
+
+        #plot it
+        draw(self.tree, 0, total_leaves, total_depth - 0.5)
+        plt.title("Custom CART Decision Tree", fontsize=14)
+        plt.tight_layout()
+        plt.show()
     
