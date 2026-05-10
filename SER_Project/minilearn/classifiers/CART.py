@@ -170,3 +170,20 @@ class CART:
     def score(self, X, y):
         preds = self.predict(X)
         return np.mean(preds == y)
+    
+    def print_tree(self, tree=None, depth=0, prefix=""):
+        """Print the tree as indented text."""
+        if tree is None:
+            tree = self.tree
+    
+        indent = "    " * depth
+        # Leaf — just a class label string (or a dict of probs if you added predict_proba)
+        if not isinstance(tree, dict) or "feature" not in tree:
+            print(f"{indent}{prefix}→ {tree}")
+            return
+        # Internal node
+        feature = tree["feature"]
+        middlenum = tree["middlenum"]
+        print(f"{indent}{prefix}[Feature {feature} <= {middlenum:.4f}]")
+        self.print_tree(tree["left"], depth + 1, prefix="YES → ")
+        self.print_tree(tree["right"], depth + 1, prefix="NO  → ")

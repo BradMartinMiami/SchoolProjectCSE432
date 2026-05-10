@@ -79,6 +79,13 @@ class SVMMM:
         preds = self.predict(X)
         return np.mean(preds == y)
     
+    #for ROC scores
+    def decision_function(self, X):
+        """Return raw scores (before sign thresholding)."""
+        X = np.array(X)
+        scores = np.dot(X, self.w) + self.b
+        return scores
+    
 
 
 
