@@ -65,7 +65,11 @@ class LogisticRegressionMM:
             #now we divide each by the sum of the row to get the probability adding up to 1
             probs = exp_scores / exp_scores.sum(axis=1, keepdims=True)
 
-
+            #there is a lot happenign in this block
+            #So the probs - y is the error matrix / a matrix of weights of the predicted - the true probability
+            #it has the same shape of our W. so now we do X.T.dot because we have to transpose X due to dot product
+            #X right now is not the size of Y. so we flip it because both have the same number of features.
+            #for example if X is (2400, 496) and probs - y is (2400, 8), then it would turn into (496, 8)
             grad = X.T.dot(probs - Y) / n_samples
 
             self.W = self.W - self.lr * grad
