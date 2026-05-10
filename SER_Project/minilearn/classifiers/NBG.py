@@ -1,5 +1,7 @@
 import numpy as np
 
+#We assume evertyhing follows a normal distribution and 
+#
 class GaussianNaiveBayesMM:
 
     def __init__(self):

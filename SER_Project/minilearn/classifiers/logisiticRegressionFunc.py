@@ -11,7 +11,7 @@ class LogisticRegressionMM:
     #n_iters is the amount of times you go through the list and train basically.
     #like the amount of time you do the learning rate
     def __init__(self, lr=0.1, n_iters=1000):
-        self.lr = lr
+        self.learning = lr
         self.n_iters = n_iters
 
         # set when we call fit()
@@ -77,7 +77,7 @@ class LogisticRegressionMM:
 
             #so now the W matrix is storing everything. We need to make the gradient change. So we multiply the gradient by the learning 
             #rate and then subtract it from the W to change future scores in the next loop. So everything we have been working on comes into this loop
-            self.W = self.W - self.lr * grad
+            self.W = self.W - self.learning * grad
 
     #now that W is trained we can get the probabilites from softmax with one pass
     def predict_proba(self, X):
