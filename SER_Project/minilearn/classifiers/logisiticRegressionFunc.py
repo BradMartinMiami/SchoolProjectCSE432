@@ -70,28 +70,35 @@ class LogisticRegressionMM:
             #it has the same shape of our W. so now we do X.T.dot because we have to transpose X due to dot product
             #X right now is not the size of Y. so we flip it because both have the same number of features.
             #for example if X is (2400, 496) and probs - y is (2400, 8), then it would turn into (496, 8)
+            #so this new matrix is like all of the values that need to be pushed or pulled by the algorithm
+            #if you have an example row for angry that has negatives in three spots those are hurting angry and should push more towards
+            #angry, it does this for every class. It does this over and over across features.
             grad = X.T.dot(probs - Y) / n_samples
 
+            #so now the W matrix is storing everything. We need to make the gradient change. So we multiply the gradient by the learning 
+            #rate and then subtract it from the W to change future scores in the next loop. So everything we have been working on comes into this loop
             self.W = self.W - self.lr * grad
 
-
+    #now that W is trained we can get the probabilites from softmax with one pass
     def predict_proba(self, X):
         X = np.array(X, dtype=float)
+        #same bias stacked on the first row
         X = np.hstack([np.ones((X.shape[0], 1)), X])
 
+        #same process here
         scores = X.dot(self.W)
         scores = scores - scores.max(axis=1, keepdims=True)
         exp_scores = np.exp(scores)
         probs = exp_scores / exp_scores.sum(axis=1, keepdims=True)
         return probs
 
-
+    #uses our previous method to get the prediction for each data point
     def predict(self, X):
         probs = self.predict_proba(X)
         best_idx = np.argmax(probs, axis=1)
         return self.classes[best_idx]
 
-
+    #how well it was precdicited
     def score(self, X, y):
         preds = self.predict(X)
         y = np.array(y)

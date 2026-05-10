@@ -6,14 +6,12 @@ class SVMMM:
 
         #the C is the amount of regularization
         self.C = C
-        #Which kernel to use since we have multiple
         self.learning = learning
         self.max_iters = max_iters
         self.w = None
         self.b = None
         self.classes_ = None
 
-    
     def fit(self, X, y):
         # Convert labels to -1 and 1
         self.classes_ = np.unique(y)
