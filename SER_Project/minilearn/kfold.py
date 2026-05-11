@@ -32,21 +32,29 @@ def k_fold_split(X, y, k=5, shuffle=True, random_state=None):
         #randomizes the indices of those rows
         if shuffle:
             np.random.shuffle(class_indices)
-        #Splits the indices into the amount of folds
+        #Splits the indices into the amount of folds. So if 400 happy indices
+        #and k=5, you get 5 chunks of ~80 happy indices each
         split_indices = np.array_split(class_indices, k)
-        #
+        #take each chunk and assign it to the matching fold's test bucket
+        #so fold 0 gets chunk 0 of happy, fold 1 gets chunk 1 of happy, etc.
+        #after doing this for every class each fold ends up with a proportional
+        #slice of every class
         for fold_num in range(k):
             folds[fold_num].extend(split_indices[fold_num])
-
+    #now we need to package the train/test pairs
     final_folds = []
+    #all sample indices from 0 to n-1, used to compute train indices below
     all_indices = np.arange(len(X))
-    #is our helper for our big loop.
+    #loop through each fold and build its (train, test) pair
     for fold_num in range(k):
+        #the test indices are the ones we filled into folds[fold_num] above
         test_indices = np.array(folds[fold_num])
+        #train indices are everything else. setdiff1d does all_indices - test_indices
+        #so we get back every index that isnt in the test set
         train_indices = np.setdiff1d(all_indices, test_indices)
-
+        #store as a tuple so we can get it as (test,train)
         final_folds.append((train_indices, test_indices))
-
+    #return list of k tuples, each with (train indices, test indices)
     return final_folds
 
 
